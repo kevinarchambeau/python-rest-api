@@ -1,4 +1,4 @@
-from flask import Flask, Response
+from flask import Flask, Response, request
 from db import SQLite
 import numbers
 
@@ -16,9 +16,14 @@ def get_all_messages():
 
 @app.route("/message", methods=['POST'])
 def insert_messages():
-    return {
-        "post": "yes"
-    }
+    body = request.json
+    message = body.get('message')
+    if not message:
+        return Response("Body should be JSON in the format of id:message", 400)
+    db = SQLite()
+    message_id = db.insert_message(message)
+
+    return {message_id: message}
 
 
 @app.route("/message/<message_id>", methods=['GET'])
@@ -55,6 +60,3 @@ def update_messages(message_id):
         "id": message_id,
         "put": "yes"
     }
-
-
-

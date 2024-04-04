@@ -25,5 +25,16 @@ class SQLite:
 
         return dict(result)
 
+    # If used in a multiprocess env need to catch if the db is locked
+    def insert_message(self, message):
+        cursor = self.con.cursor()
+        print(message)
+        result = cursor.execute("INSERT INTO message (message) VALUES(?)", [message])
+        self.con.commit()
+        return result.lastrowid
+
+    def update_message(self, message_id, message):
+        return "weeeeee"
+
     def close(self):
         self.con.close()
