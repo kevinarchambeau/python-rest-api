@@ -2,8 +2,8 @@ import sqlite3
 
 
 class SQLite:
-    def __init__(self):
-        self.con = sqlite3.connect("demodb.db")
+    def __init__(self, db):
+        self.con = sqlite3.connect(db)
 
     def get_all_messages(self):
         messages = {}
@@ -44,6 +44,17 @@ class SQLite:
         cursor = self.con.cursor()
         try:
             cursor.execute("UPDATE message SET message = ? WHERE id = ?", data)
+            self.con.commit()
+        except sqlite3.Error as err:
+            print(err)
+            return None
+
+        return True
+
+    def delete_message(self, message_id):
+        cursor = self.con.cursor()
+        try:
+            cursor.execute("DELETE FROM message WHERE id = ?", [message_id])
             self.con.commit()
         except sqlite3.Error as err:
             print(err)
