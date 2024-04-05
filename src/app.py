@@ -5,6 +5,7 @@ import numbers
 app = Flask(__name__)
 DB_NAME = "demodb.db"
 
+
 @app.route("/message/all", methods=['GET'])
 def get_all_messages():
     # This endpoint shouldn't exist in a production app as is, at a minimum page pagination should be used
@@ -24,8 +25,8 @@ def insert_messages():
     body = request.json
     message = body.get('message')
 
-    if not message:
-        return Response("Body should be JSON in the schema of {message: messageValue}", 400)
+    if not message or not is_string(message):
+        return Response('Body should be JSON in the schema of {"message": "messageValue"}', 400)
 
     db = SQLite(DB_NAME)
     message_id = str(db.insert_message(message))
@@ -82,8 +83,8 @@ def update_messages(message_id):
 
     body = request.json
     message = body.get('message')
-    if not message:
-        return Response("Body should be JSON in the schema of {message: messageValue}", 400)
+    if not message or not is_string(message):
+        return Response('Body should be JSON in the schema of {"message": "messageValue"}', 400)
 
     db = SQLite(DB_NAME)
     exists = db.get_messages(message_id)
@@ -100,7 +101,7 @@ def update_messages(message_id):
     return Response("Message updated")
 
 
-# Helper function to improve readability
+# Helper functions to improve readability
 def is_num(value):
     try:
         isinstance(int(value), numbers.Number)
@@ -108,3 +109,7 @@ def is_num(value):
         return False
 
     return True
+
+
+def is_string(value):
+    return isinstance(value, str)

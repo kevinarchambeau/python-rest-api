@@ -39,7 +39,7 @@ def test_create_message():
 def test_create_invalid_message():
     response = app.test_client().post("/message", json={"messages": "here's one"})
     assert response.status_code == 400
-    assert response.data.decode('utf-8') == "Body should be JSON in the schema of {message: messageValue}"
+    assert response.data.decode('utf-8') == 'Body should be JSON in the schema of {"message": "messageValue"}'
 
 
 def test_update_message():
@@ -48,10 +48,17 @@ def test_update_message():
     assert response.data.decode('utf-8') == "Message updated"
 
 
+def test_update_message_invalid():
+    response = app.test_client().put("/message/1", json={"message": 33})
+    assert response.status_code == 400
+    assert response.data.decode('utf-8') == 'Body should be JSON in the schema of {"message": "messageValue"}'
+
+
 def test_invalid_update_message():
     response = app.test_client().put("/message/99999", json={"message": "updated"})
     assert response.status_code == 404
     assert response.data.decode('utf-8') == "Invalid message id"
+
 
 def test_invalid_delete_message():
     response = app.test_client().delete("/message/99999")
