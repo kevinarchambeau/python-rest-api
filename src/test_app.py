@@ -84,16 +84,16 @@ def test_validate_jwt_with_no_header():
     assert response.data.decode('utf-8') == "No valid auth header present"
 
 
-def test_validate_jwt_with_bad_token():
-    response = app.test_client().get("/jwt/validate", headers={'Authorization': 'Bearer hjrdtdfgqw'})
-    assert response.status_code == 400
-    assert response.data.decode('utf-8') == "Invalid token"
-
-
 def test_validate_jwt_with_bad_header():
     response = app.test_client().get("/jwt/validate", headers={'Authorization': 'Bearer '})
     assert response.status_code == 400
     assert response.data.decode('utf-8') == "No valid auth header present"
+
+
+def test_validate_jwt_with_bad_token():
+    response = app.test_client().get("/jwt/validate", headers={'Authorization': 'Bearer hjrdtdfgqw'})
+    assert response.status_code == 400
+    assert response.data.decode('utf-8') == "Invalid token"
 
 
 def test_validate_jwt_with_expired_token():
