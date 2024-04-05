@@ -11,6 +11,10 @@ def get_all_messages():
     db = SQLite()
     messages = db.get_all_messages()
     db.close()
+
+    if not messages:
+        return Response("Unable to retrieve messages", 500)
+
     return messages
 
 
@@ -85,6 +89,7 @@ def update_messages(message_id):
     return Response("Message updated")
 
 
+# Helper function to improve readability
 def is_num(value):
     try:
         isinstance(int(value), numbers.Number)
