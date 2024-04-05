@@ -1,12 +1,24 @@
 from flask import Flask, Response, request
 from db import SQLite
 import numbers
+import jwt
+import configparser
+import time
 
 app = Flask(__name__)
+
 DB_NAME = "demodb.db"
+config = configparser.ConfigParser()
+config.read("conf/appConfig.ini")
+# App config for jwt endpoints
+jwt_conf = config["JWT"]
+JWT_ALGO = jwt_conf.get("algorithm")
+JWT_KEY = jwt_conf.get("key")
+JWT_ISSUER = jwt_conf.get("valid_issuer")
+JWT_TTL = int(jwt_conf.get("ttl"))
 
 
-@app.route("/message/all", methods=['GET'])
+@app.route("/message/all", methods=["GET"])
 def get_all_messages():
     # This endpoint shouldn't exist in a production app as is, at a minimum page pagination should be used
     # TODO use connection pooling
@@ -20,7 +32,7 @@ def get_all_messages():
     return messages
 
 
-@app.route("/message", methods=['POST'])
+@app.route("/message", methods=["POST"])
 def insert_messages():
     body = request.json
     message = body.get('message')
@@ -40,7 +52,7 @@ def insert_messages():
     return response
 
 
-@app.route("/message/<message_id>", methods=['GET'])
+@app.route("/message/<message_id>", methods=["GET"])
 def get_messages(message_id):
     if not is_num(message_id):
         return Response("Invalid message id, must be a number", 400)
@@ -55,7 +67,7 @@ def get_messages(message_id):
     return message
 
 
-@app.route("/message/<message_id>", methods=['DELETE'])
+@app.route("/message/<message_id>", methods=["DELETE"])
 def delete_messages(message_id):
     if not is_num(message_id):
         return Response("Invalid message id, must be a number", 400)
@@ -76,7 +88,7 @@ def delete_messages(message_id):
     return Response("Message deleted")
 
 
-@app.route("/message/<message_id>", methods=['PUT'])
+@app.route("/message/<message_id>", methods=["PUT"])
 def update_messages(message_id):
     if not is_num(message_id):
         return Response("Invalid message id, must be a number", 400)
@@ -100,6 +112,42 @@ def update_messages(message_id):
 
     return Response("Message updated")
 
+
+@app.route("/jwt/build", methods=["GET"])
+def create_jwt():
+    issuer = request.args.get("issuer", default="anonymous")
+    subject = request.args.get("subject", default="anonymous")
+    expiration = int(time.time()) + JWT_TTL
+    payload = {
+        "iss": issuer,
+        "sub": subject,
+        "nbf": expiration - JWT_TTL,
+        "exp": expiration
+    }
+    encoded = jwt.encode(payload, JWT_KEY, JWT_ALGO)
+
+    return encoded
+
+
+@app.route("/jwt/validate", methods=["GET"])
+def validate_jwt():
+    bearer = request.headers.get("Authorization")
+    if not bearer:
+        return Response("No valid auth header present", 400)
+    try:
+        token = bearer.split()[1]
+    except Exception:
+        return Response("No valid auth header present", 400)
+
+    try:
+        decoded = jwt.decode(token, JWT_KEY, JWT_ALGO)
+    except (jwt.ExpiredSignatureError, jwt.DecodeError):
+        return Response("Invalid token", 400)
+
+    if decoded.get("iss") != JWT_ISSUER:
+        return Response("Invalid token", 400)
+
+    return "Token is valid"
 
 # Helper functions to improve readability
 def is_num(value):
