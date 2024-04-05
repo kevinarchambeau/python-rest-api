@@ -3,7 +3,6 @@ from db import SQLite
 import numbers
 
 app = Flask(__name__)
-
 DB_NAME = "demodb.db"
 
 @app.route("/message/all", methods=['GET'])

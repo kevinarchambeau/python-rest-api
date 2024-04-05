@@ -20,14 +20,15 @@ class SQLite:
     def get_messages(self, message_id):
         cursor = self.con.cursor()
         try:
-            result = cursor.execute("SELECT * FROM message WHERE id = :message_id", [message_id])
+            result = cursor.execute("SELECT * FROM message WHERE id = ?", [message_id])
         except sqlite3.Error as err:
             print(err)
             return None
 
         return dict(result)
 
-    # If used in a multiprocess env need to catch if the db is locked
+    # If used in a multiprocess env need to catch/handle if the db is locked
+
     def insert_message(self, message):
         cursor = self.con.cursor()
         try:
@@ -54,7 +55,7 @@ class SQLite:
     def delete_message(self, message_id):
         cursor = self.con.cursor()
         try:
-            cursor.execute("DELETE FROM message WHERE id = ?", [message_id])
+            result = cursor.execute("DELETE FROM message WHERE id = ?", [message_id])
             self.con.commit()
         except sqlite3.Error as err:
             print(err)
