@@ -18,22 +18,31 @@ def get_all_messages():
 def insert_messages():
     body = request.json
     message = body.get('message')
-    if not message:
-        return Response("Body should be JSON in the format of id:message", 400)
-    db = SQLite()
-    message_id = db.insert_message(message)
 
-    return {message_id: message}
+    if not message:
+        return Response("Body should be JSON in the schema of {message: messageValue}", 400)
+
+    db = SQLite()
+    message_id = str(db.insert_message(message))
+    if not message_id:
+        db.close()
+        return Response("Insert failed", 500)
+
+    response = db.get_messages(message_id)
+    db.close()
+
+    return response
 
 
 @app.route("/message/<message_id>", methods=['GET'])
 def get_messages(message_id):
-    if not isinstance(message_id, numbers.Number):
+    if not is_num(message_id):
         return Response("Invalid message id, must be a number", 400)
 
     db = SQLite()
     message = db.get_messages(message_id)
     db.close()
+
     if not message:
         return Response("Invalid message id", 404)
 
@@ -42,7 +51,7 @@ def get_messages(message_id):
 
 @app.route("/message/<message_id>", methods=['DELETE'])
 def delete_messages(message_id):
-    if not isinstance(message_id, numbers.Number):
+    if not is_num(message_id):
         return Response("Invalid message id, must be a number", 400)
 
     return {
@@ -53,10 +62,33 @@ def delete_messages(message_id):
 
 @app.route("/message/<message_id>", methods=['PUT'])
 def update_messages(message_id):
-    if not isinstance(message_id, numbers.Number):
+    if not is_num(message_id):
         return Response("Invalid message id, must be a number", 400)
 
-    return {
-        "id": message_id,
-        "put": "yes"
-    }
+    body = request.json
+    message = body.get('message')
+    if not message:
+        return Response("Body should be JSON in the schema of {message: messageValue}", 400)
+
+    db = SQLite()
+    exists = db.get_messages(message_id)
+
+    if not exists:
+        db.close()
+        return Response("Invalid message id", 404)
+
+    result = db.update_message(message_id, message)
+    if not result:
+        return Response("Message not updated", 500)
+    db.close()
+
+    return Response("Message updated")
+
+
+def is_num(value):
+    try:
+        isinstance(int(value), numbers.Number)
+    except ValueError:
+        return False
+
+    return True
