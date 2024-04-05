@@ -176,7 +176,7 @@ def get_character(character_id):
 def is_num(value):
     try:
         isinstance(int(value), numbers.Number)
-    except ValueError:
+    except Exception:
         return False
 
     return True
