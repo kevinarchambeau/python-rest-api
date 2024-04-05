@@ -4,12 +4,16 @@ import numbers
 import jwt
 import configparser
 import time
+import requests
+import os
 
 app = Flask(__name__)
 
 DB_NAME = "demodb.db"
 config = configparser.ConfigParser()
-config.read("conf/appConfig.ini")
+config_file = os.getenv("CONFIG_FILE", default="/app/conf/appConfig.ini")
+print(config_file)
+config.read(config_file)
 # App config for jwt endpoints
 jwt_conf = config["JWT"]
 JWT_ALGO = jwt_conf.get("algorithm")
@@ -148,6 +152,25 @@ def validate_jwt():
         return Response("Invalid token", 400)
 
     return "Token is valid"
+
+
+@app.route("/richandmorty/character", methods=["GET"])
+def get_characters():
+    response = requests.get("https://rickandmortyapi.com/api/character")
+    if response.status_code == 200:
+        return response.text
+    else:
+        return Response(f"Error occurred with external API: {response.status_code} : {response.text} ", 400)
+
+
+@app.route("/richandmorty/character/<character_id>", methods=["GET"])
+def get_character(character_id):
+    response = requests.get(f"https://rickandmortyapi.com/api/character/{character_id}")
+    if response.status_code == 200:
+        return response.text
+    else:
+        return Response(f"Error occurred with external API: {response.status_code} : {response.text} ", 400)
+
 
 # Helper functions to improve readability
 def is_num(value):
