@@ -1,4 +1,4 @@
-# python-rest-api
+# Python REST API
 
 Use Python 3.12 or higher
 
