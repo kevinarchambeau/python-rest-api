@@ -25,7 +25,7 @@ To set up a registry and push the image:
 
 Install:
 `helm install python-rest-api-chart rest-api/ --values rest-api/values.yaml`
-Run `./podfordward` if you want to be able to use localhost:8080 to reach it.
+Run `./podforward.sh` if you want to be able to use localhost:8080 to reach it.
 
 #### Swagger
 YAML is in `swagger/swagger_server/swagger`.
