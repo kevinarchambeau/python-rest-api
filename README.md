@@ -2,7 +2,7 @@
 
 Use Python 3.12 or higher
 
-To run locally:
+### To run locally:
 `pip install -r local_requirements.txt`
 `python -m flask --app src/app run --port 8080` or `./run.sh`
 
@@ -26,3 +26,8 @@ To set up a registry and push the image:
 Install:
 `helm install python-rest-api-chart rest-api/ --values rest-api/values.yaml`
 Run `./podfordward` if you want to be able to use localhost:8080 to reach it.
+
+#### Swagger
+YAML is in `swagger/swagger_server/swagger`.
+Best way to view swagger is to build the docker image as specified in the README.md in the `swagger` directory.
+You can then use `http://localhost:8080/ui/`

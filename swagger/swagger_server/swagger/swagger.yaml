@@ -1,0 +1,192 @@
+openapi: 3.0.3
+info:
+  title: Swagger Python REST API - OpenAPI 3.1
+  description: Basic swagger
+  version: 1.0.0
+servers:
+- url: http://localhost:8080/
+tags:
+- name: message
+  description: CRUD messages
+- name: JWT
+  description: JWT creation and validation
+- name: richandmorty
+  description: richandmorty character API proxy
+paths:
+  /message/all:
+    get:
+      tags:
+      - message
+      summary: Get all messages
+      operationId: message_all_get
+      responses:
+        "200":
+          description: Successful operation
+      x-openapi-router-controller: swagger_server.controllers.message_controller
+  /message/{messageId}:
+    get:
+      tags:
+      - message
+      summary: Find message by ID
+      description: Returns a single message
+      operationId: message_message_id_get
+      parameters:
+      - name: messageId
+        in: path
+        description: ID of message to return
+        required: true
+        style: simple
+        explode: false
+        schema:
+          format: int64
+      responses:
+        "200":
+          description: successful operation
+        "400":
+          description: Invalid ID supplied
+        "404":
+          description: Message not found
+      x-openapi-router-controller: swagger_server.controllers.message_controller
+    put:
+      tags:
+      - message
+      summary: Update a message by ID
+      description: "Body: {\"message\": \"messageValue\"}"
+      operationId: message_message_id_put
+      parameters:
+      - name: messageId
+        in: path
+        description: ID of message to update
+        required: true
+        style: simple
+        explode: false
+        schema:
+          format: int64
+      responses:
+        "200":
+          description: successful operation
+        "400":
+          description: Invalid input
+        "404":
+          description: Invalid message id
+      x-openapi-router-controller: swagger_server.controllers.message_controller
+    delete:
+      tags:
+      - message
+      summary: Deletes a message
+      description: message a pet
+      operationId: message_message_id_delete
+      parameters:
+      - name: messageId
+        in: path
+        description: ID of message to delete
+        required: true
+        style: simple
+        explode: false
+        schema:
+          format: int64
+      responses:
+        "200":
+          description: successful operation
+        "400":
+          description: Invalid message id
+        "404":
+          description: Invalid message id
+      x-openapi-router-controller: swagger_server.controllers.message_controller
+  /message:
+    post:
+      tags:
+      - message
+      summary: Adds a message
+      description: "Body: {\"message\": \"messageValue\"}"
+      operationId: message_post
+      responses:
+        "200":
+          description: successful operation
+        "400":
+          description: Invalid input
+      x-openapi-router-controller: swagger_server.controllers.message_controller
+  /jet/build:
+    get:
+      tags:
+      - JWT
+      summary: Generates a JWT
+      description: Uses default values if issuer or subject aren't specified
+      operationId: jet_build_get
+      parameters:
+      - name: issuer
+        in: query
+        description: Issuer
+        required: false
+        style: form
+        explode: true
+        schema: {}
+      - name: subject
+        in: query
+        description: Subject
+        required: false
+        style: form
+        explode: true
+        schema: {}
+      responses:
+        "200":
+          description: successful operation
+      x-openapi-router-controller: swagger_server.controllers.jwt_controller
+  /jwt/validate:
+    get:
+      tags:
+      - JWT
+      summary: Validates token
+      description: ""
+      operationId: jwt_validate_get
+      parameters:
+      - name: Authorization
+        in: header
+        description: JWT Bearer token
+        required: true
+        style: simple
+        explode: false
+        schema: {}
+      responses:
+        "200":
+          description: successful operation
+        "400":
+          description: Invalid token
+      x-openapi-router-controller: swagger_server.controllers.jwt_controller
+  /richandmorty/character:
+    get:
+      tags:
+      - richandmorty
+      summary: Gets all characters
+      description: ""
+      operationId: richandmorty_character_get
+      responses:
+        "200":
+          description: successful operation
+        "400":
+          description: Invalid request
+      x-openapi-router-controller: swagger_server.controllers.richandmorty_controller
+  /richandmorty/character/{characterId}:
+    get:
+      tags:
+      - richandmorty
+      summary: Find character by ID
+      description: Returns a single character
+      operationId: richandmorty_character_character_id_get
+      parameters:
+      - name: characterId
+        in: path
+        description: ID of character to return
+        required: true
+        style: simple
+        explode: false
+        schema:
+          format: int64
+      responses:
+        "200":
+          description: successful operation
+        "400":
+          description: Invalid request
+      x-openapi-router-controller: swagger_server.controllers.richandmorty_controller
+components: {}
+
