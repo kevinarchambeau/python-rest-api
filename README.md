@@ -18,9 +18,11 @@ To build and run the docker image:
 `docker run --name python-rest-api -p 127.0.0.1:8080:8080 python-rest-api`
 
 If you have helm and kubernetes setup locally:
+To set up a registry and push the image:
 `docker run -d -p 5000:5000 --restart=always --name registry registry:2`
 `docker build -t localhost:5000/python-rest-api .`
 `docker push localhost:5000/python-rest-api`
 
+Install:
 `helm install python-rest-api-chart rest-api/ --values rest-api/values.yaml`
 Run `./podfordward` if you want to be able to use localhost:8080 to reach it.
