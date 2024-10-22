@@ -10,10 +10,8 @@ import os
 app = Flask(__name__)
 
 DB_NAME = os.getenv("DB_PATH", default="/app/demodb.db")
-print(DB_NAME)
 config = configparser.ConfigParser()
 config_file = os.getenv("CONFIG_FILE", default="/app/conf/appConfig.ini")
-print(config_file)
 config.read(config_file)
 # App config for jwt endpoints
 jwt_conf = config["JWT"]
