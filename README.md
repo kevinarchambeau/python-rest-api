@@ -1,5 +1,8 @@
 # Python REST API
 
+A simple CRUD API using sqlite for the backend. It also demonstrates JWT creation and 
+verification and usage of 3rd party APIs. See the swagger for details.
+
 Use Python 3.12 or higher
 
 ### To run locally:
@@ -35,3 +38,6 @@ Run `./podforward.sh` if you want to be able to use localhost:8080 to reach it.
 YAML is in `swagger/swagger_server/swagger`.
 Best way to view swagger is to build the docker image as specified in the README.md in the `swagger` directory.
 You can then use `http://localhost:8080/ui/`
+
+## Contributing
+Feel free to open a pull request if you have a suggestion.
